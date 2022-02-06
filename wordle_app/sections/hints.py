@@ -1,5 +1,5 @@
 import dash_bootstrap_components as dbc
-from dash import ALL, Dash, Input, Output, State, html
+from dash import ALL, Dash, Input, Output, State, dash_table, html
 from dash.exceptions import PreventUpdate
 
 from data_source import CorpusFactory
@@ -11,12 +11,21 @@ def get_layout():
             children=[
                 dbc.ModalHeader("Hints"),
                 dbc.ModalBody([
-                    html.Div(id="table-score-output"),
+                    dash_table.DataTable(
+                        id="table-score-output",
+                        columns=[{'name': i, 'id': i} for i in ['WORD', 'SCORE']],
+                        filter_action="native",
+                        sort_action="native",
+                        row_selectable=False,
+                        page_action="native",
+                        page_current=0,
+                        page_size=20,
+                    ),
                 ]),
             ],
             id='hint-modal',
             is_open=False,
-            size='xxl'),
+            size='xl'),
     ])
 
 
@@ -26,7 +35,7 @@ def register_callbacks(app: Dash):
     @app.callback(
         [
             Output('hint-modal', 'is_open'),
-            Output('table-score-output', 'children')
+            Output('table-score-output', 'data')
         ],
         [
             Input('fetch-hints-button', 'n_clicks'),
@@ -68,5 +77,5 @@ def register_callbacks(app: Dash):
 
         return [
             True,
-            dbc.Table.from_dataframe(data, bordered=True, hover=True, responsive=True, striped=True)
+            data.to_dict('records'),
         ]

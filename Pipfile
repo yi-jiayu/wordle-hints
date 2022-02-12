@@ -9,6 +9,7 @@ tqdm = "*"
 dash = "*"
 dash-bootstrap-components = "*"
 pandas = "*"
+gunicorn = "*"
 
 [dev-packages]
 ipython = "*"

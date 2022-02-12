@@ -11,6 +11,9 @@ defaults:
   run:
     shell: bash
 
+env:
+  IMAGE_NAME: danielbok/wordle-dash-app
+
 jobs:
   docker:
     name: Build docker image
@@ -18,9 +21,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-
-      - name: Set Version
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
       - name: Login to DockerHub
         uses: docker/login-action@v1
@@ -32,11 +32,22 @@ jobs:
         uses: docker/build-push-action@v2.9.0
         with:
           push: ${{ startsWith(github.ref, 'refs/tags/') }}
-          tags: daniel/wordle-dash-app:${{ env.RELEASE_VERSION }}
+          tags: ${{ env.IMAGE_NAME }}
 
   update:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     steps:
       - name: SSH to DO instance, stop existing app and spin up new app
-        run: echo "Hello World"
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USERNAME }}
+          key: ${{ secrets.DO_PRIVATE_KEY }}
+          script_stop: true  # stops after first failure
+          script: |
+            docker container kill wordle
+            docker container prune -f
+            docker image pull ${{ env.IMAGE_NAME }}
+            docker image prune -f
+            docker container run -p 8080:8080 --name wordle --rm -d ${{ env.IMAGE_NAME }}

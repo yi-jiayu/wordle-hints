@@ -372,3 +372,8 @@ class WordRanking:
 
     def get_rankings(self, discount_repeated_letters=False) -> dict[str, int]:
         return self._rankings['discounted' if discount_repeated_letters else 'standard']
+
+
+if __name__ == '__main__':
+    print("Creating all corpus")
+    CorpusFactory().recreate_corpus()

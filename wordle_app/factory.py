@@ -5,7 +5,7 @@ from .sections import controls, hints
 
 
 def create_app():
-    app = Dash(__name__, external_stylesheets=[themes.BOOTSTRAP])
+    app = Dash(__name__, external_stylesheets=[themes.BOOTSTRAP], title="Wordle Hints")
     app.layout = get_layout()
 
     controls.register_callbacks(app)

@@ -72,7 +72,7 @@ def register_callbacks(app: Dash):
             exclude_letters=exclusions,
         )
 
-        if hint_limit and int(hint_limit) > 0:
+        if (hint_limit := int(hint_limit or 0)) > 0:
             data = data.head(hint_limit)
 
         return [

@@ -35,7 +35,23 @@ jobs:
           push: ${{ startsWith(github.ref, 'refs/tags/') }}
           tags: ${{ env.IMAGE_NAME }}
 
-  update:
+  connection:
+    name: Test Digital Ocean Connection
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH to DO instance, stop existing app and spin up new app
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USERNAME }}
+          key: ${{ secrets.DO_PRIVATE_KEY }}
+          script: |
+            echo "Testing Digital Connection"
+            echo "Successful"
+
+  deploy:
+    name: Update Digital Ocean
+    needs: [ docker, connection ]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     steps:
@@ -45,7 +61,6 @@ jobs:
           host: ${{ secrets.DO_HOST }}
           username: ${{ secrets.DO_USERNAME }}
           key: ${{ secrets.DO_PRIVATE_KEY }}
-          script_stop: true  # stops after first failure
           script: |
             docker container kill wordle
             docker container prune -f

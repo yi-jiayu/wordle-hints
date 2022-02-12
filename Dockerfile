@@ -2,7 +2,7 @@ FROM python:3.10-slim-buster
 
 WORKDIR /app
 
-RUN apt-get update && apt-get upgrade
+RUN apt-get update -y && apt-get upgrade -y
 
 COPY ["Pipfile", "Pipfile.lock", "./"]
 RUN pip install pipenv && pipenv install --system --deploy --ignore-pipfile

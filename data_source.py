@@ -1,5 +1,6 @@
 import io
 import operator
+import os
 import pickle
 import zipfile
 from collections import defaultdict
@@ -79,7 +80,7 @@ class CorpusFactory:
 
     @staticmethod
     def _get_cache_folder(source: str):
-        cache_folder = Path.home() / ".wordle" / source
+        cache_folder = Path(os.getenv('WORDLE_FOLDER', Path.home())) / ".wordle" / source
         cache_folder.mkdir(mode=0o666, parents=True, exist_ok=True)
 
         return cache_folder
@@ -372,8 +373,3 @@ class WordRanking:
 
     def get_rankings(self, discount_repeated_letters=False) -> dict[str, int]:
         return self._rankings['discounted' if discount_repeated_letters else 'standard']
-
-
-if __name__ == '__main__':
-    print("Creating all corpus")
-    CorpusFactory().recreate_corpus()

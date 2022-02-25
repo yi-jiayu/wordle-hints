@@ -1,0 +1,56 @@
+.header {
+  background-color: white;
+  height: 64px;
+  color: rgba(0, 0, 0, 0.85);
+  line-height: 64px;
+  border-bottom: 1px solid #656565;
+  box-shadow: 0 2px #cbcbcb;
+  padding: 0 50px;
+  display: flex;
+  justify-content: space-between;
+}
+
+@media screen and (max-width: 844px) {
+  .header {
+    padding: 0 20px;
+  }
+}
+
+.header > div:first-of-type {
+  flex: 1;
+}
+
+.header > div:last-of-type {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.headerIcon {
+  font-size: 20px;
+  margin-right: 8px;
+}
+
+.title {
+  font-family: fantasy;
+  font-weight: 700;
+  font-size: 28px !important;
+  letter-spacing: 0.01em;
+  text-align: center;
+  vertical-align: center;
+  height: 100%;
+}
+
+.contentBody {
+  background-color: white;
+  padding: 24px;
+  /*100vh - header - footer */
+  min-height: calc(100vh - 64px - 140px);
+}
+
+.footer {
+  background-color: white;
+  display: flex;
+  width: 100%;
+}

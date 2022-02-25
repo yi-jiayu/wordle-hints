@@ -1,0 +1,7 @@
+.container {
+  display: flex;
+}
+
+.container > div {
+  margin-left: 6px;
+}

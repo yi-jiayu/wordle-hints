@@ -1,0 +1,25 @@
+.letterBoxGrid {
+  display: flex;
+  flex-direction: column;
+}
+
+.letterBoxRow {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.letterBox {
+  height: 60px;
+  width: 60px;
+  font-size: 28px;
+  border: 2px solid #a9a9a9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.letterBoxContainer {
+  margin: 3px;
+}

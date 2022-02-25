@@ -14,6 +14,8 @@ from tqdm import tqdm
 
 
 class CorpusFactory:
+    __corpus_instances__: dict[str, 'WordCorpus'] = {}
+
     __data_source__ = {
         'coca': {
             'home': 'corpusdata',
@@ -85,21 +87,25 @@ class CorpusFactory:
 
         return cache_folder
 
-    def get_corpus(self, source='web2', reload_source=False, reload_corpus=False):
+    def get_corpus(self, source='web2'):
         """Gets the corpus object"""
+        if source in self.__corpus_instances__:
+            return self.__corpus_instances__[source]
+
         assert source in self.__data_source__, f"{source} is not a valid corpus source. Use one of {tuple(self.__data_source__.keys())}"
         file_location = self._get_cache_folder(source) / f'length_{self._word_length}.p'
 
-        if not file_location.exists() or reload_source or reload_corpus:
-            words = self.get_corpus_source(source, reload_source)
+        if not file_location.exists():
+            words = self.get_corpus_source(source)
             corpus = WordCorpus(words, source, self._word_length)
             with open(file_location, 'wb') as f:
                 pickle.dump(corpus, f)
-
-            return corpus
         else:
             with open(file_location, 'rb') as f:
-                return pickle.load(f)
+                corpus = pickle.load(f)
+
+        self.__corpus_instances__[source] = corpus
+        return corpus
 
     def get_corpus_source(self, source: str, reload_source=False) -> set[str]:
         """Gets the corpus's full word set. Downloads from source if it does not exist in cache"""
@@ -229,7 +235,7 @@ class WordCorpus:
         73  SHISH    10800
         74  SWISS     6600
         """
-        words = self.words
+        words = self.words.copy()
         if fixed_letters:
             for i, letter in fixed_letters.items():
                 words &= self._fixed_letter_position_map[i][letter.upper()]

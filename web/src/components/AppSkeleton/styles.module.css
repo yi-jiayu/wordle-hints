@@ -33,13 +33,19 @@
 }
 
 .title {
-  font-family: fantasy;
+  font-family: monospace;
   font-weight: 700;
   font-size: 28px !important;
   letter-spacing: 0.01em;
   text-align: center;
   vertical-align: center;
   height: 100%;
+}
+
+@media screen and (max-width: 844px) {
+  .title {
+    font-size: 24px !important
+  }
 }
 
 .contentBody {

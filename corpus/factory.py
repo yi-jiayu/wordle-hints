@@ -20,45 +20,55 @@ class CorpusFactory:
         'coca': {
             'home': 'corpusdata',
             'url': 'https://www.corpusdata.org/coca/samples/coca-samples-wlp.zip',
+            'github': 'https://github.com/DanielBok/gh-dumps/raw/master/wordle/coca.p',
         },
         'coha': {
             'home': 'corpusdata',
             'url': 'https://www.corpusdata.org/coha/samples/wordLemPoS.zip',
+            'github': 'https://github.com/DanielBok/gh-dumps/raw/master/wordle/coha.p',
         },
         'glowbe': {
             'home': 'corpusdata',
             'url': 'https://www.corpusdata.org/glowbe/samples/wordLemPoS.zip',
+            'github': 'https://github.com/DanielBok/gh-dumps/raw/master/wordle/glowbe.p',
         },
         'now': {
             'home': 'corpusdata',
             'url': 'https://www.corpusdata.org/now/samples/wordLemPos.zip',
+            'github': 'https://github.com/DanielBok/gh-dumps/raw/master/wordle/now.p',
         },
         'corona': {
             'home': 'corpusdata',
             'url': 'https://www.corpusdata.org/corona/samples/wordLemPoS.zip',
+            'github': 'https://github.com/DanielBok/gh-dumps/raw/master/wordle/corona.p',
         },
         'wiki': {
             'home': 'corpusdata',
             'url': 'https://www.corpusdata.org/wiki/samples/wordLemPoS.zip',
+            'github': 'https://github.com/DanielBok/gh-dumps/raw/master/wordle/wiki.p',
         },
         'tv': {
             'home': 'corpusdata',
             'url': 'https://www.corpusdata.org/tv/samples/tv-wlp.zip',
+            'github': 'https://github.com/DanielBok/gh-dumps/raw/master/wordle/tv.p',
         },
         'movies': {
             'home': 'corpusdata',
             'url': 'https://www.corpusdata.org/movies/samples/movies-wlp.zip',
+            'github': 'https://github.com/DanielBok/gh-dumps/raw/master/wordle/movies.p',
         },
         'soap': {
             'home': 'corpusdata',
             'url': 'https://www.corpusdata.org/soap/samples/soap-wlp.zip',
+            'github': 'https://github.com/DanielBok/gh-dumps/raw/master/wordle/soap.p',
         },
         'web2': {
             'home': 'freebsd',
             'url': [
                 'https://svnweb.freebsd.org/base/head/share/dict/web2?revision=326913',
                 'https://svnweb.freebsd.org/base/head/share/dict/web2a?revision=180208',
-            ]
+            ],
+            'github': 'https://github.com/DanielBok/gh-dumps/raw/master/wordle/web2.p',
         }
     }
 
@@ -158,35 +168,44 @@ class CorpusFactory:
 
     def download_corpus_source(self, source: str):
         details = self.__data_source__[source]
-        match home := details['home']:
-            case 'freebsd':
-                urls = details['url']
-                words = set()
-                for url in urls:
+        if os.getenv("GITHUB_SOURCE", '0') == '1':
+            url = details['github']
+            resp = requests.get(url)
+
+            if not resp.ok:
+                raise requests.exceptions.RequestException(f"Could not get corpus data from: {url}")
+
+            words = pickle.loads(resp.content)
+        else:
+            match home := details['home']:
+                case 'freebsd':
+                    urls = details['url']
+                    words = set()
+                    for url in urls:
+                        resp = requests.get(url)
+                        words |= {word for w in resp.text.split('\n') if (word := w.strip().upper()).isalpha()}
+
+                case 'corpusdata':
+                    url = details['url']
                     resp = requests.get(url)
-                    words |= {word for w in resp.text.split('\n') if (word := w.strip().upper()).isalpha()}
 
-            case 'corpusdata':
-                url = details['url']
-                resp = requests.get(url)
+                    if not resp.ok:
+                        raise requests.exceptions.RequestException(f"Could not get corpus data from: {url}")
 
-                if not resp.ok:
-                    raise requests.exceptions.RequestException(f"Could not get corpus data from: {url}")
-
-                words = set()
-                with zipfile.ZipFile(io.BytesIO(resp.content)) as zf:
-                    for info in zf.infolist():
-                        if info.filename.endswith('.txt'):
-                            for line in zf.open(info).readlines():
-                                for word in line.split(b'\t'):
-                                    try:
-                                        word = word.upper().strip()
-                                        if word.isalpha():
-                                            words.add(word.decode())
-                                    except UnicodeEncodeError:
-                                        pass
-            case _:
-                raise ValueError(f"invalid source home: '{home}'")
+                    words = set()
+                    with zipfile.ZipFile(io.BytesIO(resp.content)) as zf:
+                        for info in zf.infolist():
+                            if info.filename.endswith('.txt'):
+                                for line in zf.open(info).readlines():
+                                    for word in line.split(b'\t'):
+                                        try:
+                                            word = word.upper().strip()
+                                            if word.isalpha():
+                                                words.add(word.decode())
+                                        except UnicodeEncodeError:
+                                            pass
+                case _:
+                    raise ValueError(f"invalid source home: '{home}'")
 
         with open(self._corpus_source_filepath(source), 'wb') as f:
             pickle.dump(words, f)

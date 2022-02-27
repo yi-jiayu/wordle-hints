@@ -10,14 +10,12 @@ To run the app, run `python main.py`.
 ```shell
 # assuming from src directory
 
-# dash app is deprecated
-# docker image build -t danielbok/wordle-dash-app .
-
 # To build api server image
-docker image build -t danielbok/wordle-api-server -f api.Dockerfile .
+cd wordle_api
+docker image build -t danielbok/wordle-api-server:latest . & docker image push danielbok/wordle-api-server:latest
 
 cd web
-docker image build -t danielbok/wordle-web -f web.Dockerfile .
+docker image build -t danielbok/wordle-web:latest . & docker image push danielbok/wordle-web:latest
 
 # To test run the full service
 docker-compose -p wordle up --no-build -d

@@ -1,5 +1,5 @@
 from corpus import WordFilter
-from wordle_api.ext import APIRouter
+from server.ext import APIRouter
 from . import models
 from .constants import FACTORY, RANKER
 

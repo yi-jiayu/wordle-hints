@@ -10,11 +10,14 @@ import axios, {
 } from "axios";
 import camelCaseKeys from "camelcase-keys";
 import { ReactNode } from "react";
-import { BeforeRequestFunction, ErrorFunction, RequestConfig, SuccessFunction, } from "./types";
+import {
+  BeforeRequestFunction,
+  ErrorFunction,
+  RequestConfig,
+  SuccessFunction,
+} from "./types";
 
-const BASE_URL = !!process.env.REACT_APP_API_URL
-  ? process.env.REACT_APP_API_URL
-  : `${window.location.protocol}//${window.location.hostname}:8080`;
+const BASE_URL = `${window.location.protocol}//${window.location.hostname}:8080`;
 
 /*
  * HEADERS

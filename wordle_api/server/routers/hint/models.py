@@ -1,6 +1,6 @@
 from pydantic import conint, constr, validator
 
-from wordle_api.ext import CamelModel
+from server.ext import CamelModel
 from .constants import FACTORY, WORD_LENGTH
 
 Letter = constr(regex=r'^[a-zA-Z]$', strip_whitespace=True)

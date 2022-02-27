@@ -2,7 +2,7 @@ import os
 
 import uvicorn
 
-from wordle_api import create_app
+from server import create_app
 
 app = create_app()
 

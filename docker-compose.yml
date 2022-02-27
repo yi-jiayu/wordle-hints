@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  web:
+    image: danielbok/wordle-web
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+
+  server:
+    image: danielbok/wordle-api-server
+    restart: always
+    ports:
+      - "8080:8080"

@@ -1,6 +1,7 @@
 .git/
 .github/
-tests/
 __pycache__/
 .gitignore
 README.md
+web/
+.idea/

@@ -1,10 +1,9 @@
 Wordle Hint App
 ---------------
 
-The corpus and word ranking functions are stored in `data_source.py`. 
+The corpus and word ranking functions are stored in `data_source.py`.
 
 To run the app, run `python main.py`.
-
 
 ## Docker commands
 
@@ -17,9 +16,11 @@ To run the app, run `python main.py`.
 # To build api server image
 docker image build -t danielbok/wordle-api-server -f api.Dockerfile .
 
+cd web
 docker image build -t danielbok/wordle-web -f web.Dockerfile .
-# To test run container
-docker container run --rm -p 8080:8080 --name wordle danielbok/wordle-dash-app
+
+# To test run the full service
+docker-compose -p wordle up --no-build -d
 ```
 
 ## DigitalOcean Droplet setup

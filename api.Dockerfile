@@ -8,9 +8,10 @@ RUN pip install pipenv && pipenv install --system --deploy --ignore-pipfile
 
 # Build cache, WORDLE_FOLDER determines where the wordle cache is stored. Path will be /app/.wordle
 ENV WORDLE_FOLDER=/app
-COPY ["data_source.py", "./"]
-RUN python -c "from data_source import CorpusFactory; CorpusFactory().recreate_corpus()"
+COPY ["corpus", "corpus"]
+ENV GITHUB_SOURCE=1
+RUN python -c "from corpus import CorpusFactory; CorpusFactory().recreate_data_files()"
 
 COPY . .
 
-ENTRYPOINT ["gunicorn", "-b", "0.0.0.0:8080", "main:server"]
+ENTRYPOINT ["uvicorn", "api_server:app", "--host", "0.0.0.0", "--port", "8080"]

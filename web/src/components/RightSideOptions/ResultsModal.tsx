@@ -21,7 +21,13 @@ const ResultTable = () => {
   const hints = useRootSelector((s) => s.hints.hints);
   const columns = [
     { title: "Word", dataIndex: "word" },
-    { title: "Score", dataIndex: "score" },
+    {
+      title: "Scores",
+      children: [
+        { title: "Partition", dataIndex: "partition" },
+        { title: "Frequency", dataIndex: "frequency" },
+      ],
+    },
   ];
 
   return (

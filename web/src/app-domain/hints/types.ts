@@ -16,5 +16,14 @@ export type Store = {
 
 export type WordHint = {
   word: string;
-  score: number;
+  partition: number;
+  frequency: number;
+};
+
+export type WordHintQuery = {
+  letter: string;
+  positions: number[]; // fixed position
+  exclude_positions: number[]; // letters not in these positions
+  atLeast: number;
+  atMost: number;
 };

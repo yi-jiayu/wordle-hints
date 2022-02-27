@@ -1,7 +1,7 @@
 import { LIMIT } from "app-constants";
 import AllActions from "app-domain/root-action";
 import produce from "immer";
-import { range, sortBy } from "lodash";
+import { range } from "lodash";
 import { getType } from "typesafe-actions";
 
 import * as A from "./actions";
@@ -94,7 +94,7 @@ const reducer = (state = defaultState, action: AllActions) =>
 
       case getType(A.fetchHints.success):
         draft.loading.hints = "SUCCESS";
-        draft.hints = sortBy(action.payload, (e) => -e.score);
+        draft.hints = action.payload;
         break;
 
       case getType(A.setCorpus):

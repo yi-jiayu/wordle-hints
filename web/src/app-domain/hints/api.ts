@@ -27,11 +27,11 @@ export const fetchHints =
   (): ThunkFunctionAsync<boolean> => async (dispatch, getState) => {
     const state = getState();
     const corpus = state.hints.corpus.selected;
-    const { exclude, fixed, include } = selectHintQuery(state);
+    const { query } = selectHintQuery(state);
 
     const { status } = await api.Post<T.WordHint[]>(
       "",
-      { corpus, fixed, include, exclude, limit: state.hints.searchLimit },
+      { corpus, limit: state.hints.searchLimit, query },
       {
         beforeRequest: () => dispatch(A.fetchHints.request()),
         onSuccess: (data) => dispatch(A.fetchHints.success(data)),

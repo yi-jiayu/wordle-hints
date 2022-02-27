@@ -6,10 +6,7 @@ name = "pypi"
 [packages]
 requests = "*"
 tqdm = "*"
-dash = "*"
-dash-bootstrap-components = "*"
 pandas = "*"
-gunicorn = "*"
 fastapi = "*"
 uvicorn = "*"
 

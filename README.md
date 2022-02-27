@@ -9,9 +9,15 @@ To run the app, run `python main.py`.
 ## Docker commands
 
 ```shell
-# To build image
-docker image build -t danielbok/wordle-dash-app .
+# assuming from src directory
 
+# dash app is deprecated
+# docker image build -t danielbok/wordle-dash-app .
+
+# To build api server image
+docker image build -t danielbok/wordle-api-server -f api.Dockerfile .
+
+docker image build -t danielbok/wordle-web -f web.Dockerfile .
 # To test run container
 docker container run --rm -p 8080:8080 --name wordle danielbok/wordle-dash-app
 ```

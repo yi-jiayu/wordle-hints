@@ -1,6 +1,7 @@
 import { NUM_LETTERS, NUM_TRIES } from "app-constants";
 import { RootState } from "app-domain/root-state";
 import { range, reduce } from "lodash";
+import React from "react";
 import * as T from "./types";
 
 type WordHintQueryBuilder = {
@@ -13,24 +14,25 @@ type WordHintQueryBuilder = {
 
 export const selectHintQuery = ({
   hints: { status, values, activeId },
-}: RootState): { errors: string[]; query: T.WordHintQuery[] } => {
-  const queryMap: Record<string, WordHintQueryBuilder> = {};
-  range(NUM_TRIES).forEach((row) => {
-    // for each row
-    // count the number of letter occurrence to get the maximum number of occurrence of each letter
-    // If there are 2 greens or 2 yellows, it means that the letter occurs at least 2 times
-    // 1 green and 1 grey means at most one time
-
-    const rowNum = row * NUM_LETTERS;
-    if (status[rowNum] === "unknown" || values[rowNum] === "") return;
-
-    UpdateQueryPayload(row, queryMap);
-  });
-
+}: RootState): { errors: React.ReactNode[]; query: T.WordHintQuery[] } => {
   const errors = [];
   if (activeId === 0) {
     errors.push("No letters specified");
+  } else if (activeId % NUM_LETTERS > 0) {
+    const diff = NUM_LETTERS - (activeId % NUM_LETTERS);
+    errors.push(
+      `Need ${diff} more letter${diff > 1 ? "s" : ""} to complete the word`
+    );
   }
+
+  if (errors.length > 0) {
+    return { errors, query: [] };
+  }
+
+  const queryMap: Record<string, WordHintQueryBuilder> = {};
+  range(NUM_TRIES).forEach((row) => {
+    UpdateQueryPayload(row, queryMap);
+  });
 
   const query = Object.values(queryMap).map(
     ({ exclude_positions, positions, ...rest }) => ({
@@ -40,7 +42,7 @@ export const selectHintQuery = ({
     })
   );
 
-  return { errors, query };
+  return { query, errors: Validate(query) };
 
   function GetLetterLimitPerRow(row: number) {
     const letterStatusArray = range(NUM_LETTERS).reduce((acc, col) => {
@@ -57,6 +59,10 @@ export const selectHintQuery = ({
       return acc;
     }, {} as Record<string, BoxStatus[]>);
 
+    // for each row
+    // count the number of letter occurrence to get the maximum number of occurrence of each letter
+    // If there are 2 greens or 2 yellows, it means that the letter occurs at least 2 times
+    // 1 green and 1 grey means at most one time
     return reduce(
       letterStatusArray,
       (acc, statuses, letter) => {
@@ -102,6 +108,8 @@ export const selectHintQuery = ({
 
     range(NUM_LETTERS).forEach((col) => {
       const i = row * NUM_LETTERS + col; // index
+      if (status[i] === "unknown" || values[i] === "") return;
+
       const pos = (i % NUM_LETTERS) + 1;
       const s = status[i];
       const v = values[i];
@@ -130,5 +138,19 @@ export const selectHintQuery = ({
           break;
       }
     });
+  }
+
+  function Validate(query: T.WordHintQuery[]) {
+    return query.reduce((errors, q) => {
+      if (q.atLeast > q.atMost) {
+        errors.push(
+          <>
+            Letter <b>{q.letter}</b> is ill-defined
+          </>
+        );
+      }
+
+      return errors;
+    }, [] as React.ReactNode[]);
   }
 };

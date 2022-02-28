@@ -1,7 +1,6 @@
 import { API, notifyOnApiError } from "app-domain/api";
 import { ThunkFunctionAsync } from "app-domain/types";
 import * as A from "./actions";
-import { selectHintQuery } from "./selectors";
 import * as T from "./types";
 
 const api = new API("hint");
@@ -24,14 +23,18 @@ export const fetchCorpus = (): ThunkFunctionAsync => async (dispatch) => {
 };
 
 export const fetchHints =
-  (): ThunkFunctionAsync<boolean> => async (dispatch, getState) => {
-    const state = getState();
-    const corpus = state.hints.corpus.selected;
-    const { query } = selectHintQuery(state);
+  (query: T.WordHintQuery[]): ThunkFunctionAsync<boolean> =>
+  async (dispatch, getState) => {
+    const {
+      hints: {
+        corpus: { selected: corpus },
+        searchLimit: limit,
+      },
+    } = getState();
 
     const { status } = await api.Post<T.WordHint[]>(
       "",
-      { corpus, limit: state.hints.searchLimit, query },
+      { corpus, limit, query },
       {
         beforeRequest: () => dispatch(A.fetchHints.request()),
         onSuccess: (data) => dispatch(A.fetchHints.success(data)),

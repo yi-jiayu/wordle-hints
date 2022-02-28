@@ -16,7 +16,8 @@ class WordFilter:
 
 class WordCorpus:
     def __init__(self, words: set[str], source: str, word_length: int):
-        assert isinstance(word_length, int) and word_length > 0, "word length must be a positive integer"
+        if not (isinstance(word_length, int) and word_length > 0):
+            raise ValueError("word length must be a positive integer")
         self._word_length = word_length
         self._source = source
 
@@ -127,7 +128,9 @@ class LetterCountMap:
                 self._map[letter][num].add(word)
 
     def get(self, letter: str, min_count: int, max_count: int):
-        assert 0 < min_count <= max_count <= self._word_length
+        if not (0 < min_count <= max_count <= self._word_length):
+            raise ValueError(f"letter '{letter}' min_count and max_count must be between [0, {self._word_length}] and min_count must be <= max_count. "
+                             f"Got min_count={min_count} and max_count={max_count}")
         letter_count_map = self._map[letter]
 
         words = set()

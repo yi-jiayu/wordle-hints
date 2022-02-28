@@ -106,7 +106,8 @@ class CorpusFactory:
         if source in self.__corpus_instances__:
             return self.__corpus_instances__[source]
 
-        assert source in self.__data_source__, f"{source} is not a valid corpus source. Use one of {tuple(self.__data_source__.keys())}"
+        if source not in self.__data_source__:
+            raise ValueError(f"{source} is not a valid corpus source. Use one of {tuple(self.__data_source__.keys())}")
         file_location = self._corpus_pickle_filepath(source)
 
         if not file_location.exists():
@@ -141,7 +142,7 @@ class CorpusFactory:
         --------
         >>> from corpus import CorpusFactory
         >>> factory = CorpusFactory(5)
-        >>> factory.recreate_data_files(reload_source=False)  # doctest: +SKIP
+        >>> factory.recreate_data_files(reload_source=False, reload_frequency=False)  # doctest: +SKIP
         """
         total = len(self.sources)
 

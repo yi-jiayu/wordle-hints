@@ -5,6 +5,7 @@ from pkgutil import iter_modules
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette.requests import Request
 
 from .utils import project_root
 
@@ -39,9 +40,9 @@ class AppBuilder:
         return self
 
     def add_error_handlers(self):
-        # @self._app.exception_handler(PostgresError)
-        # async def catch_all_handler(_: Request, exc: PostgresError):
-        #     return JSONResponse(status_code=400, content={"error": exc.message, "detail": exc.detail})
+        @self._app.exception_handler(ValueError)
+        async def catch_general_errors_handler(_: Request, exc: ValueError):
+            return JSONResponse(status_code=400, content={"error": str(exc)})
 
         return self
 

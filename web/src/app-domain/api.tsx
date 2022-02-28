@@ -227,14 +227,17 @@ export const notifyOnApiError = (e: AxiosResponse) => {
         ))}
       </ul>
     );
+  } else if (e.data.hasOwnProperty("error")) {
+    content = e.data.error;
   } else {
     content = e.data;
   }
 
-  console.log(e);
+  console.error(e);
   notification.error({
     duration: 5,
-    message: (
+    message: "Error",
+    description: (
       <div>
         <Typography.Text strong>Status</Typography.Text>: {e.status}
         <br />

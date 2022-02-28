@@ -1,5 +1,5 @@
-import { SendOutlined } from "@ant-design/icons";
-import { Button, List, Modal, Skeleton, Table } from "antd";
+import { SendOutlined, WarningTwoTone } from "@ant-design/icons";
+import { Button, Modal, notification, Skeleton, Table } from "antd";
 import { HintsApi } from "app-domain/hints";
 import { selectHintQuery } from "app-domain/hints/selectors";
 import { useRootSelector } from "app-domain/hooks";
@@ -8,13 +8,13 @@ import { useDispatch } from "react-redux";
 
 const useHintState = () =>
   useRootSelector((state) => {
-    const { errors } = selectHintQuery(state);
+    const { query, errors } = selectHintQuery(state);
     const { hints } = state;
 
     const loading = hints.loading.hints === "REQUEST";
     const hasErrors = errors.length > 0;
 
-    return { loading, hasErrors };
+    return { loading, hasErrors, errors, query };
   });
 
 const ResultTable = () => {
@@ -35,23 +35,10 @@ const ResultTable = () => {
   );
 };
 
-const ErrorList = () => {
-  const { errors } = useRootSelector(selectHintQuery);
-
-  return (
-    <List
-      header={<h4>Errors</h4>}
-      bordered
-      dataSource={errors}
-      renderItem={(msg) => <List.Item>{msg}</List.Item>}
-    />
-  );
-};
-
 const ResultsModal = () => {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
-  const { loading, hasErrors } = useHintState();
+  const { loading, hasErrors, errors, query } = useHintState();
 
   return (
     <div>
@@ -61,8 +48,20 @@ const ResultsModal = () => {
         icon={<SendOutlined />}
         onClick={async () => {
           if (hasErrors) {
-            setVisible(true); // show error message straightaway
-          } else if (await dispatch(HintsApi.fetchHints())) {
+            notification.error({
+              icon: <WarningTwoTone twoToneColor="#b01010" />,
+              message: "Input Errors",
+              description: (
+                <ul style={{ listStyleType: "none", paddingLeft: 4 }}>
+                  {errors.map((e, i) => (
+                    <li key={i}>{e}</li>
+                  ))}
+                </ul>
+              ),
+              placement: "topRight",
+              style: { marginLeft: 0 },
+            });
+          } else if (await dispatch(HintsApi.fetchHints(query))) {
             setVisible(true); // wait for hints to be retrieved before showing
           }
         }}
@@ -81,7 +80,7 @@ const ResultsModal = () => {
             rows: 10,
           }}
         >
-          {hasErrors ? <ErrorList /> : <ResultTable />}
+          <ResultTable />
         </Skeleton>
       </Modal>
     </div>

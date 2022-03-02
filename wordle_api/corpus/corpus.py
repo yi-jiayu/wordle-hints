@@ -134,7 +134,7 @@ class LetterCountMap:
         letter_count_map = self._map[letter]
 
         words = set()
-        for i in range(min_count, max_count):
+        for i in range(min_count, max_count + 1):
             words |= letter_count_map.get(i, set())
 
         return words

@@ -14,3 +14,17 @@
     width: 100%;
   }
 }
+
+.ctrlKeys {
+  background: rgb(255, 0, 0, 0.7) !important;
+  color: white;
+  min-width: 70px;
+}
+
+.keyL {
+  margin-right: 12px !important;
+}
+
+.keyA {
+  margin-left: 12px;
+}

@@ -36,8 +36,24 @@ const KeyboardWrapper = ({ keyboardRef }: Props) => {
           ],
         }}
         display={{
-          "{bksp}": "BACKSPACE",
+          "{bksp}": "⌫",
         }}
+        physicalKeyboardHighlight={true}
+        physicalKeyboardHighlightPress={true}
+        buttonTheme={[
+          {
+            class: styles.ctrlKeys,
+            buttons: "{bksp}",
+          },
+          {
+            class: styles.keyA,
+            buttons: "A",
+          },
+          {
+            class: styles.keyL,
+            buttons: "L",
+          },
+        ]}
       />
     </div>
   );

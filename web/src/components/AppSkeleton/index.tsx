@@ -1,5 +1,9 @@
-import { ContainerOutlined, MenuUnfoldOutlined, OrderedListOutlined, } from "@ant-design/icons";
-import { Drawer, Layout, Menu } from "antd";
+import {
+  ContainerOutlined,
+  MenuUnfoldOutlined,
+  OrderedListOutlined,
+} from "@ant-design/icons";
+import { Drawer, Layout, Menu, Badge } from "antd";
 import React, { PropsWithChildren, useState } from "react";
 import styles from "./styles.module.css";
 
@@ -35,7 +39,6 @@ const AppSkeleton = ({ children, header, footer }: Props) => {
           title={<span>{TITLE_TEXT}</span>}
           headerStyle={{ borderBottomColor: "#656565" }}
           placement="left"
-          width={500}
           visible={!collapsed}
           onClose={toggleCollapse}
         >
@@ -56,7 +59,9 @@ const AppSkeleton = ({ children, header, footer }: Props) => {
                 toggleCollapse();
               }}
             >
-              Documentation
+              <Badge.Ribbon text="Coming soon" color="green">
+                Documentation
+              </Badge.Ribbon>
             </Menu.Item>
           </Menu>
         </Drawer>

@@ -46,8 +46,8 @@ const KeyboardWrapper = ({ keyboardRef }: Props) => {
             buttons: "{bksp}",
           },
           {
-            class: styles.keyA,
-            buttons: "A",
+            class: styles.keyLeft,
+            buttons: "A Z",
           },
           {
             class: styles.keyL,

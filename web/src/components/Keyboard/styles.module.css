@@ -18,13 +18,13 @@
 .ctrlKeys {
   background: rgb(255, 0, 0, 0.7) !important;
   color: white;
-  min-width: 70px;
+  min-width: 60px;
 }
 
 .keyL {
   margin-right: 12px !important;
 }
 
-.keyA {
+.keyLeft {
   margin-left: 12px;
 }

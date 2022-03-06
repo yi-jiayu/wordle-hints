@@ -6,6 +6,8 @@ import { useRootSelector } from "app-domain/hooks";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 
+const { Summary } = Table;
+
 const useHintState = () =>
   useRootSelector((state) => {
     const { query, errors } = selectHintQuery(state);
@@ -31,7 +33,23 @@ const ResultTable = () => {
   ];
 
   return (
-    <Table columns={columns} dataSource={hints} size="small" rowKey="word" />
+    <Table
+      columns={columns}
+      dataSource={hints}
+      pagination={false}
+      size="small"
+      rowKey="word"
+      scroll={{ y: "57vh" }}
+      summary={() => (
+        <Summary fixed>
+          <Summary.Row>
+            <Summary.Cell colSpan={3} index={0}>
+              Total of <b>{hints.length}</b> words
+            </Summary.Cell>
+          </Summary.Row>
+        </Summary>
+      )}
+    />
   );
 };
 
@@ -70,6 +88,7 @@ const ResultsModal = () => {
         visible={visible}
         title="Results"
         onCancel={() => setVisible(false)}
+        style={{ top: "5vh" }}
         footer={null}
       >
         <Skeleton

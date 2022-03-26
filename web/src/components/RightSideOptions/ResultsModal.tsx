@@ -1,6 +1,7 @@
 import { SendOutlined, WarningTwoTone } from "@ant-design/icons";
 import { Button, Modal, notification, Skeleton, Table } from "antd";
-import { HintsApi } from "app-domain/hints";
+import { ColumnsType } from "antd/lib/table";
+import { HintsApi, HintsType } from "app-domain/hints";
 import { selectHintQuery } from "app-domain/hints/selectors";
 import { useRootSelector } from "app-domain/hooks";
 import React, { useState } from "react";
@@ -21,13 +22,23 @@ const useHintState = () =>
 
 const ResultTable = () => {
   const hints = useRootSelector((s) => s.hints.hints);
-  const columns = [
+  const columns: ColumnsType<HintsType.WordHint> = [
     { title: "Word", dataIndex: "word" },
     {
       title: "Scores",
       children: [
-        { title: "Partition", dataIndex: "partition" },
-        { title: "Frequency", dataIndex: "frequency" },
+        {
+          title: "Partition",
+          dataIndex: "partition",
+          sorter: sorter("partition"),
+          sortDirections: ["descend"],
+        },
+        {
+          title: "Frequency",
+          dataIndex: "frequency",
+          sorter: sorter("frequency"),
+          sortDirections: ["descend"],
+        },
       ],
     },
   ];
@@ -51,6 +62,14 @@ const ResultTable = () => {
       )}
     />
   );
+
+  function sorter(
+    field: Extract<keyof HintsType.WordHint, "partition" | "frequency">
+  ) {
+    return function sort(x: HintsType.WordHint, y: HintsType.WordHint) {
+      return x[field] - y[field];
+    };
+  }
 };
 
 const ResultsModal = () => {
